@@ -1,0 +1,6 @@
+id=oplus_phantom_chg
+name=OPlus Hayalet Şarj
+version=v1.0.0
+versionCode=10
+author=Mahsun
+description=Kablo yokken /proc/charger_cycle unwakelock; takılınca wakelock. Hayalet PD + battery suspend wakelock.
