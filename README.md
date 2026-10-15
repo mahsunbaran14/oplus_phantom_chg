@@ -9,6 +9,7 @@ OPlus `oplus_chg` şarj yığını (charging stack) üzerinde hayalet PD
 
 Kontrol noktası: `/proc/charger_cycle` → `unwakelock` / `wakelock`.
 
+- `post-fs-data` → `early.sh` (setsid, boot blok yok, 15 s tavan). `hw_detect` yokken yazmaz. `hw_detect=1` → `wakelock`, aksi `unwakelock` (boot ikonu).
 - Kablo / WARP takılı (`hw_detect=1`): `wakelock`
 - Hayalet PD (`hw_detect=0` ama `online`/`present` veya VBUS > 3.7 V): `unwakelock`
 - Kablo çıkışı (`hw_detect` 1→0): `unwakelock`
