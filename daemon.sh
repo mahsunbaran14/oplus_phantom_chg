@@ -12,8 +12,6 @@ LOG=$MODDIR/phantom.log
 
 last=""
 prev_hw=""
-last_ui=""
-last_cap=""
 
 trim_log() {
 	[ -f "$LOG" ] || return 0
@@ -35,24 +33,6 @@ write_cycle() {
 		last=$cmd
 		log "$cmd hw=$hw online=$online present=$present vbus=$vbus"
 	fi
-}
-
-# SystemUI şimşek: Health AC (usb/online + OCP). connect_disable YASAK.
-sync_ui() {
-	want=$1
-	[ "$want" = "$last_ui" ] && return 0
-	case "$want" in
-	unplug)
-		cmd battery unplug -f >/dev/null 2>&1 || return 1
-		;;
-	reset)
-		cmd battery reset -f >/dev/null 2>&1 || return 1
-		last_cap=""
-		;;
-	*) return 1 ;;
-	esac
-	last_ui=$want
-	log "ui $want hw=$hw online=$online present=$present vbus=$vbus"
 }
 
 while [ ! -f "$USB/hw_detect" ] || [ ! -e "$CYCLE" ]; do
@@ -86,22 +66,10 @@ while :; do
 
 	if [ "$hw" -eq 1 ]; then
 		write_cycle wakelock
-		sync_ui reset
 	elif [ "$phantom" -eq 1 ]; then
 		write_cycle unwakelock
-		sync_ui unplug
-		cap=$(cat /sys/class/power_supply/battery/capacity 2>/dev/null)
-		case "$cap" in ''|*[!0-9]*) ;; *)
-			if [ "$cap" != "$last_cap" ]; then
-				cmd battery set level "$cap" >/dev/null 2>&1 && last_cap=$cap
-			fi
-			;;
-		esac
-	else
-		if [ "$prev_hw" = "1" ]; then
-			write_cycle unwakelock
-		fi
-		sync_ui reset
+	elif [ "$prev_hw" = "1" ]; then
+		write_cycle unwakelock
 	fi
 
 	prev_hw=$hw
