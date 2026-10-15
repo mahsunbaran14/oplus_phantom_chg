@@ -11,8 +11,9 @@ Kontrol noktası: `/proc/charger_cycle` → `unwakelock` / `wakelock`.
 
 - `post-fs-data` → `early.sh` (setsid, boot blok yok, 15 s tavan). `hw_detect` yokken yazmaz. `hw_detect=1` → `wakelock`, aksi `unwakelock` (boot ikonu).
 - Kablo / WARP takılı (`hw_detect=1`): `wakelock`
-- Hayalet PD (`hw_detect=0` ama `online`/`present` veya VBUS > 3.7 V): `unwakelock`
-- Kablo çıkışı (`hw_detect` 1→0): `unwakelock`
+- Hayalet PD (`hw_detect=0` ama `online`/`present` veya VBUS > 3.7 V): `unwakelock` + `cmd battery unplug` (SystemUI AC ikonu)
+- Kablo çıkışı / hayalet bitti: `unwakelock` + `cmd battery reset`
+- `connect_disable` yazılmaz (SM8350 `disconnect_vbus` NULL → PMIC_WD)
 
 DTBO yazmaz. Akım duvarı / watt kilidi kaldırmaz.
 ACC veya `oplus-battery-kit` yerine geçmez.
